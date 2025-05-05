@@ -1,6 +1,7 @@
 package com.back.domain.base.ai.controller
 
 import org.springframework.ai.embedding.EmbeddingModel
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -9,6 +10,7 @@ class ApiV1BaseController(
     val embeddingModel: EmbeddingModel
 ) {
     @GetMapping("/embed")
+    @Cacheable(value = ["embedding"], key = "#text")
     fun embed(text: String): FloatArray {
         return embeddingModel.embed(text)
     }
@@ -19,6 +21,7 @@ class ApiV1BaseController(
     )
 
     @PostMapping("/embed")
+    @Cacheable(value = ["embedding"], key = "#reqBody.text")
     fun embed(@RequestBody reqBody: BaseEmbedReqBody): FloatArray {
         return embeddingModel.embed(reqBody.text)
     }
