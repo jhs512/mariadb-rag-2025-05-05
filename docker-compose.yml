@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  mariadb_1:
+    build:
+      context: infra/mariadb_1
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: 1234
+      MARIADB_DATABASE: db_dev
+      MARIADB_USER: lldj
+      MARIADB_PASSWORD: 123414
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_1_data:/var/lib/mysql # 데이터 영속화 볼륨
+volumes:
+  mariadb_1_data:
