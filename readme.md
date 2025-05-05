@@ -108,4 +108,58 @@ class ApiV1BaseController(
 
 ## HTTP 요청 테스트
 - 임베딩/GET 임베드
+  - ![img](https://i.postimg.cc/nc2thWqL/image.png)
 - 임베딩/POST 임베드
+  - ![img](https://i.postimg.cc/g0X94kQw/image.png)
+
+# 커밋 3 : 임베딩에 캐시적용
+- [COMMIT](https://github.com/jhs512/mariadb-rag-2025-05-05/commit/4a06528)
+
+## src/main/kotlin/com.back.domain.base.ai.controller.ApiV1VectorEmbedController.kt
+```kotlin
+package com.back.domain.base.ai.controller
+
+import org.springframework.ai.embedding.EmbeddingModel
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.web.bind.annotation.*
+
+@RestController
+@RequestMapping("/api/v1/base/ai/vectorEmbed")
+class ApiV1BaseController(
+    val embeddingModel: EmbeddingModel
+) {
+    @GetMapping("/embed")
+    @Cacheable(value = ["embedding"], key = "#text") // 캐시 사용
+    fun embed(text: String): FloatArray {
+        return embeddingModel.embed(text)
+    }
+
+
+    data class BaseEmbedReqBody(
+        val text: String
+    )
+
+    @PostMapping("/embed")
+    @Cacheable(value = ["embedding"], key = "#reqBody.text") // 캐시 사용
+    fun embed(@RequestBody reqBody: BaseEmbedReqBody): FloatArray {
+        return embeddingModel.embed(reqBody.text)
+    }
+}
+```
+
+## src/main/kotlin/com.back.BackApplication.kt
+```kotlin
+package com.back
+
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+import org.springframework.cache.annotation.EnableCaching
+
+@SpringBootApplication
+@EnableCaching // 캐시 사용
+class BackApplication
+
+fun main(args: Array<String>) {
+    runApplication<BackApplication>(*args)
+}
+```
