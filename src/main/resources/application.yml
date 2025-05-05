@@ -1,3 +1,11 @@
 spring:
   application:
     name: back
+  ai:
+    embedding:
+      transformer:
+        onnx:
+          modelUri: https://huggingface.co/onnx-models/paraphrase-multilingual-MiniLM-L12-v2-onnx/resolve/main/model.onnx
+          modelOutputName: token_embeddings
+        tokenizer:
+          uri: https://huggingface.co/onnx-models/paraphrase-multilingual-MiniLM-L12-v2-onnx/resolve/main/tokenizer.json
